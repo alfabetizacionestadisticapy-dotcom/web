@@ -192,6 +192,10 @@ h1 {
   letter-spacing: 0;
 }
 
+h1 span {
+  display: block;
+}
+
 h2 {
   font-size: clamp(2rem, 4vw, 4.2rem);
   letter-spacing: 0;
@@ -625,21 +629,52 @@ textarea {
 }
 
 @media (max-width: 680px) {
+  body {
+    font-size: 17px;
+  }
+
   .brand-text {
     display: none;
   }
 
   .hero {
-    min-height: 80svh;
-    padding-inline: 18px;
+    min-height: 100svh;
+    align-items: center;
+    padding: calc(var(--header-height) + 22px) 16px 48px;
+    background-color: var(--blue-deep);
+  }
+
+  .hero-content {
+    width: 100%;
   }
 
   h1 {
-    font-size: clamp(2.1rem, 10.4vw, 3rem);
+    font-size: clamp(2.85rem, 12.2vw, 3.35rem);
+    line-height: 0.98;
   }
 
   h2 {
-    font-size: clamp(1.9rem, 9vw, 2.85rem);
+    font-size: clamp(2.15rem, 9.6vw, 3rem);
+    line-height: 1;
+  }
+
+  h3 {
+    font-size: 1.35rem;
+  }
+
+  .hero-lede {
+    max-width: 100%;
+    font-size: 1.18rem;
+    line-height: 1.45;
+    margin-top: 22px;
+  }
+
+  .eyebrow {
+    font-size: 0.86rem;
+  }
+
+  .hero-actions {
+    margin-top: 28px;
   }
 
   .hero-actions,
@@ -651,6 +686,8 @@ textarea {
 
   .button {
     width: 100%;
+    min-height: 56px;
+    font-size: 1rem;
   }
 
   .line-grid,
@@ -672,11 +709,30 @@ textarea {
     grid-template-columns: 1fr;
     padding: 18px;
   }
+
+  .stat-card,
+  .line-card,
+  .resource-card,
+  .news-card,
+  .ally-card,
+  .event-item {
+    padding: 24px;
+  }
+
+  .stat-card strong {
+    font-size: 3rem;
+  }
 }
 
 @media (max-width: 480px) {
   .hero-content,
   .section-shell {
-    width: min(354px, calc(100% - 36px));
+    width: min(390px, calc(100% - 28px));
+  }
+}
+
+@media (max-width: 360px) {
+  h1 {
+    font-size: clamp(2.45rem, 12vw, 2.75rem);
   }
 }
