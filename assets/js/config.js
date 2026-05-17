@@ -3,7 +3,7 @@ window.AEPY_CONFIG = {
   spreadsheetUrl: "https://docs.google.com/spreadsheets/d/1CdHa2jmh1V16x9CIGzmMcvHFaW9cc88QzWcY-8qcAvU/edit?usp=sharing",
   driveFolderId: "186EdVMqjpiIKKcMEHltzHhUjwU98nwG0",
   driveFolderUrl: "https://drive.google.com/drive/folders/186EdVMqjpiIKKcMEHltzHhUjwU98nwG0?usp=sharing",
-  appsScriptEndpoint: "",
+  appsScriptEndpoint: "https://script.google.com/macros/s/AKfycbxKsIbWdW4NRuPjPBcEXpVSU6w6Ouh3ogPA_oC_0zw5Ztq--hbpemeLcgP22ExzdHW4/exec",
   sheets: {
     config: "config",
     indicadores: "indicadores",
@@ -11,6 +11,7 @@ window.AEPY_CONFIG = {
     eventos: "eventos",
     recursos: "recursos",
     aliados: "aliados",
-    galeria: "galeria"
+    galeria: "galeria",
+    foro: "foro"
   }
 };

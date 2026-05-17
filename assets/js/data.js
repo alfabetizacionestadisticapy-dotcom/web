@@ -3,7 +3,7 @@
     config: [
       { key: "siteTitle", value: "Alfabetización Estadística Paraguay" },
       { key: "tagline", value: "Una red para leer datos, hacer mejores preguntas y decidir con evidencia." },
-      { key: "appsScriptEndpoint", value: "" }
+      { key: "appsScriptEndpoint", value: "https://script.google.com/macros/s/AKfycbxKsIbWdW4NRuPjPBcEXpVSU6w6Ouh3ogPA_oC_0zw5Ztq--hbpemeLcgP22ExzdHW4/exec" }
     ],
     indicadores: [
       { label: "Coordinadoras país", value: "2", note: "Paraguay figura en ISLP con Marlene Román y Teresita Báez Llamosas.", published: "TRUE" },
@@ -31,6 +31,10 @@
       { name: "UNESCO", type: "Organismo internacional", contribution: "Interés en apoyar concursos y articular con áreas de educación y ciencia.", url: "", status: "En conversación", published: "TRUE" },
       { name: "MEC", type: "Institución pública", contribution: "Actor estratégico para escala educativa nacional.", url: "", status: "Pendiente de reunión", published: "TRUE" },
       { name: "UIP", type: "Sector privado", contribution: "Posibles talleres por niveles y apoyo a la red de alfabetización estadística.", url: "", status: "Prospecto", published: "TRUE" }
+    ],
+    foro: [
+      { date: "2026-05-17", category: "Comunidad", title: "Abrimos el foro de novedades de la red", body: "Este espacio reunirá avisos, llamados a colaboración, aprendizajes y oportunidades para docentes, estudiantes, instituciones y aliados.", author: "Equipo AEPY", url: "", published: "TRUE" },
+      { date: "2026-05-17", category: "Convocatoria", title: "Buscamos materiales para la biblioteca de alfabetización estadística", body: "Los colaboradores pueden proponer guías, ejercicios, pósters, datasets, talleres y enlaces útiles para el repositorio público.", author: "Coordinación Paraguay", url: "", published: "TRUE" }
     ]
   };
 
@@ -76,11 +80,13 @@
   function rowsToObjects(rows) {
     if (!rows || rows.length < 2) return [];
     const headers = rows[0].map((header) => header.trim());
-    return rows.slice(1).map((row) => {
-      return headers.reduce((object, header, index) => {
+    return rows.slice(1).map((row, rowIndex) => {
+      const item = headers.reduce((object, header, index) => {
         object[header] = (row[index] || "").trim();
         return object;
       }, {});
+      item.__rowIndex = rowIndex + 2;
+      return item;
     });
   }
 
@@ -114,7 +120,7 @@
         window.AEPY_CONFIG.appsScriptEndpoint = sheetConfig.appsScriptEndpoint;
       }
 
-      const names = ["indicadores", "noticias", "eventos", "recursos", "aliados", "galeria"];
+      const names = ["indicadores", "noticias", "eventos", "recursos", "aliados", "galeria", "foro"];
       const loaded = await Promise.all(names.map((name) => fetchSheet(sheets[name])));
       names.forEach((name, index) => {
         data[name] = publishedOnly(loaded[index]);
@@ -131,6 +137,9 @@
   }
 
   window.AEPY_DATA = {
-    loadSiteData
+    loadSiteData,
+    fetchSheet,
+    publishedOnly,
+    configObject
   };
 })();

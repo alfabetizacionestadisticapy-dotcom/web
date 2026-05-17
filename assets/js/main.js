@@ -24,6 +24,40 @@
     return `<a class="${className}" href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
   }
 
+  function slugify(value) {
+    return String(value || "actividad")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "") || "actividad";
+  }
+
+  function calendarLink(event) {
+    if (!event.date) return "";
+    const start = event.date.replaceAll("-", "");
+    const end = (event.endDate || event.date).replaceAll("-", "");
+    const title = encodeURIComponent(event.title || "Actividad AEPY");
+    const description = encodeURIComponent(event.summary || "");
+    const location = encodeURIComponent(event.location || "Paraguay");
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//AEPY//Agenda//ES",
+      "BEGIN:VEVENT",
+      `UID:${slugify(event.title)}-${start}@aepy`,
+      `DTSTAMP:${start}T120000Z`,
+      `DTSTART;VALUE=DATE:${start}`,
+      `DTEND;VALUE=DATE:${end}`,
+      `SUMMARY:${event.title || "Actividad AEPY"}`,
+      `DESCRIPTION:${event.summary || ""}`,
+      `LOCATION:${event.location || "Paraguay"}`,
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+    return `<a class="text-link" download="${slugify(event.title)}.ics" href="data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}">Agendar</a>`;
+  }
+
   function renderIndicators(rows) {
     const container = document.querySelector("[data-indicators]");
     if (!container || !rows.length) return;
@@ -58,7 +92,10 @@
           <p>${escapeHtml(event.summary)}</p>
           <p><strong>${escapeHtml(event.location)}</strong></p>
         </div>
-        ${linkOrSpan(event.registerUrl, "Ver enlace", "text-link")}
+        <div class="event-actions">
+          ${calendarLink(event)}
+          ${linkOrSpan(event.registerUrl, "Ver enlace", "text-link")}
+        </div>
       </article>
     `).join("");
   }
@@ -118,6 +155,74 @@
         ${linkOrSpan(ally.url, "Ver sitio")}
       </article>
     `).join("");
+  }
+
+  function renderForum(rows) {
+    const container = document.querySelector("[data-forum]");
+    if (!container) return;
+    if (!rows.length) {
+      container.innerHTML = '<p class="loading-text">El foro se publicará próximamente.</p>';
+      return;
+    }
+
+    container.innerHTML = rows.map((item) => `
+      <article class="forum-card">
+        <span class="card-meta">${escapeHtml(item.category || formatDate(item.date))}</span>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p>${escapeHtml(item.body)}</p>
+        <div class="forum-card-foot">
+          <small>${escapeHtml(item.author || "Equipo AEPY")} · ${escapeHtml(formatDate(item.date))}</small>
+          ${linkOrSpan(item.url, "Abrir")}
+        </div>
+      </article>
+    `).join("");
+  }
+
+  function setupSearch(data) {
+    const input = document.querySelector("[data-site-search]");
+    const results = document.querySelector("[data-search-results]");
+    if (!input || !results) return;
+
+    const collections = [
+      ["Agenda", data.eventos || [], (item) => item.title, (item) => item.summary, "#agenda"],
+      ["Recursos", data.recursos || [], (item) => item.title, (item) => item.description, "#recursos"],
+      ["Noticias", data.noticias || [], (item) => item.title, (item) => item.summary, "#noticias"],
+      ["Aliados", data.aliados || [], (item) => item.name, (item) => item.contribution, "#aliados"],
+      ["Foro", data.foro || [], (item) => item.title, (item) => item.body, "#foro"]
+    ];
+
+    const index = collections.flatMap(([type, rows, title, body, href]) => rows.map((item) => ({
+      type,
+      title: title(item) || "",
+      body: body(item) || "",
+      href,
+      text: `${type} ${title(item) || ""} ${body(item) || ""} ${Object.values(item).join(" ")}`.toLowerCase()
+    })));
+
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+      if (query.length < 2) {
+        results.innerHTML = "<p>Escribí al menos dos letras para buscar.</p>";
+        return;
+      }
+
+      const matches = index
+        .filter((item) => item.text.includes(query))
+        .slice(0, 6);
+
+      if (!matches.length) {
+        results.innerHTML = "<p>No encontramos coincidencias. Probá con otra palabra.</p>";
+        return;
+      }
+
+      results.innerHTML = matches.map((item) => `
+        <a class="search-result" href="${escapeHtml(item.href)}">
+          <span>${escapeHtml(item.type)}</span>
+          <strong>${escapeHtml(item.title)}</strong>
+          <small>${escapeHtml(item.body)}</small>
+        </a>
+      `).join("");
+    });
   }
 
   function applyConfig(configMap) {
@@ -206,6 +311,8 @@
     renderResources(data.recursos || []);
     renderNews(data.noticias || []);
     renderAllies(data.aliados || []);
+    renderForum(data.foro || []);
+    setupSearch(data);
   }
 
   document.addEventListener("DOMContentLoaded", boot);

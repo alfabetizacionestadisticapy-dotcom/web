@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#0b4f6c">
+    <title>Administración · Alfabetización Estadística Paraguay</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+  </head>
+  <body class="admin-page">
+    <header class="admin-topbar">
+      <a class="brand" href="index.html#inicio" aria-label="Volver al sitio público">
+        <span class="brand-mark" aria-hidden="true">AEPY</span>
+        <span class="brand-text">Alfabetización Estadística Paraguay</span>
+      </a>
+      <a class="button button-ghost" href="index.html">Ver sitio público</a>
+    </header>
+
+    <main class="admin-shell">
+      <section class="admin-hero">
+        <div>
+          <p class="eyebrow">Modo administración</p>
+          <h1>
+            <span>Centro de</span>
+            <span>control editorial</span>
+          </h1>
+          <p class="intro-copy">
+            Editá contenido, publicá novedades, subí archivos al Drive del proyecto y revisá registros sin tocar el código de la web.
+          </p>
+        </div>
+
+        <form class="admin-login" data-admin-login>
+          <h2>Acceso</h2>
+          <p class="admin-help">Ingresá la clave administrativa configurada como `ADMIN_KEY` en Apps Script.</p>
+          <label>
+            Clave administrativa
+            <input name="adminKey" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="button button-primary" type="submit">Entrar al panel</button>
+          <p class="admin-status" data-admin-login-status></p>
+        </form>
+      </section>
+
+      <section class="admin-panel" data-admin-panel aria-live="polite">
+        <nav class="admin-tabs" data-admin-tabs aria-label="Secciones del panel"></nav>
+        <div class="admin-workspace">
+          <div data-admin-view></div>
+          <p class="admin-status" data-admin-status></p>
+        </div>
+      </section>
+    </main>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/admin.js"></script>
+  </body>
+</html>
